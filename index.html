@@ -667,7 +667,11 @@ function renderStudyCard() {
   document.getElementById('s-correct').textContent = studyCorrect;
   document.getElementById('s-wrong').textContent = studyWrong;
   const fc = document.getElementById('flashcard');
+  const inner = fc.querySelector('.flashcard-inner');
+  inner.style.transition = 'none';
   fc.classList.remove('flipped');
+  fc.offsetHeight; // force reflow
+  inner.style.transition = '';
   document.getElementById('study-actions').style.visibility = 'hidden';
 }
 
