@@ -342,13 +342,14 @@
 
   /* — CARD TRANSITION — */
   @keyframes cardOut {
-    to { transform: translateX(-55px); opacity: 0; }
+    to { transform: translateX(-60px); opacity: 0; }
   }
   @keyframes cardIn {
-    from { transform: translateX(55px); opacity: 0; }
+    from { transform: translateX(60px); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
   }
   .card-exit { animation: cardOut 0.18s ease forwards; }
-  .card-enter { animation: cardIn 0.22s ease; }
+  .card-enter { animation: cardIn 0.28s ease; }
 
   /* — RESPONSIVE — */
   @media (max-width: 600px) {
@@ -683,9 +684,9 @@ function renderStudyCard() {
   document.getElementById('s-correct').textContent = studyCorrect;
   document.getElementById('s-wrong').textContent = studyWrong;
   document.getElementById('study-actions').style.visibility = 'hidden';
-  fc.classList.remove('card-exit');
+  fc.classList.remove('card-exit', 'card-enter');
+  fc.offsetHeight; // force reflow so browser sees the class removal before re-adding
   fc.classList.add('card-enter');
-  fc.addEventListener('animationend', () => fc.classList.remove('card-enter'), { once: true });
 }
 
 function flipCard() {
