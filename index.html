@@ -340,6 +340,16 @@
   }
   .emoji-opt.selected { border-color: var(--accent); background: var(--accent-light); }
 
+  /* — CARD TRANSITION — */
+  @keyframes cardOut {
+    to { transform: translateX(-55px); opacity: 0; }
+  }
+  @keyframes cardIn {
+    from { transform: translateX(55px); opacity: 0; }
+  }
+  .card-exit { animation: cardOut 0.18s ease forwards; }
+  .card-enter { animation: cardIn 0.22s ease; }
+
   /* — RESPONSIVE — */
   @media (max-width: 600px) {
     header { padding: 1rem; }
@@ -660,19 +670,22 @@ function startStudy() {
 
 function renderStudyCard() {
   const card = studyCards[studyIdx];
-  document.getElementById('card-front-text').textContent = card.front;
-  document.getElementById('card-back-text').textContent = card.back;
-  document.getElementById('study-counter').textContent = `${studyIdx + 1} / ${studyCards.length}`;
-  document.getElementById('study-prog').style.width = (studyIdx / studyCards.length * 100) + '%';
-  document.getElementById('s-correct').textContent = studyCorrect;
-  document.getElementById('s-wrong').textContent = studyWrong;
   const fc = document.getElementById('flashcard');
   const inner = fc.querySelector('.flashcard-inner');
   inner.style.transition = 'none';
   fc.classList.remove('flipped');
   fc.offsetHeight; // force reflow
   inner.style.transition = '';
+  document.getElementById('card-front-text').textContent = card.front;
+  document.getElementById('card-back-text').textContent = card.back;
+  document.getElementById('study-counter').textContent = `${studyIdx + 1} / ${studyCards.length}`;
+  document.getElementById('study-prog').style.width = (studyIdx / studyCards.length * 100) + '%';
+  document.getElementById('s-correct').textContent = studyCorrect;
+  document.getElementById('s-wrong').textContent = studyWrong;
   document.getElementById('study-actions').style.visibility = 'hidden';
+  fc.classList.remove('card-exit');
+  fc.classList.add('card-enter');
+  fc.addEventListener('animationend', () => fc.classList.remove('card-enter'), { once: true });
 }
 
 function flipCard() {
@@ -683,11 +696,15 @@ function flipCard() {
 function markCard(correct) {
   if (correct) studyCorrect++; else studyWrong++;
   studyIdx++;
-  if (studyIdx >= studyCards.length) {
-    showResults();
-  } else {
-    renderStudyCard();
-  }
+  const fc = document.getElementById('flashcard');
+  fc.classList.add('card-exit');
+  setTimeout(() => {
+    if (studyIdx >= studyCards.length) {
+      showResults();
+    } else {
+      renderStudyCard();
+    }
+  }, 180);
 }
 
 function showResults() {
